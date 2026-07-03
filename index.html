@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Atlas Monitor</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="background-grid"></div>
+
+<div class="background-glow glow-one"></div>
+<div class="background-glow glow-two"></div>
+
+<div class="dashboard">
+
+<!-- ===================================== -->
+<!-- SIDEBAR -->
+<!-- ===================================== -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-circle">
+            A
+        </div>
+
+        <div>
+
+            <h2>Atlas</h2>
+
+            <span>Monitor</span>
+
+        </div>
+
+    </div>
+
+    <nav>
+
+        <button class="nav-button active">
+
+            Dashboard
+
+        </button>
+
+        <button class="nav-button">
+
+            Servers
+
+        </button>
+
+        <button class="nav-button">
+
+            Analytics
+
+        </button>
+
+        <button class="nav-button">
+
+            Performance
+
+        </button>
+
+        <button class="nav-button">
+
+            Activity
+
+        </button>
+
+        <button class="nav-button">
+
+            Alerts
+
+        </button>
+
+        <button class="nav-button">
+
+            Settings
+
+        </button>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+
+        <div class="server-pill">
+
+            ● Live API
+
+        </div>
+
+        <p>
+
+            Atlas Monitor v2.0
+
+        </p>
+
+    </div>
+
+</aside>
+
+<!-- ===================================== -->
+<!-- MAIN -->
+<!-- ===================================== -->
+
+<main class="main-content">
+
+<!-- ===================================== -->
+<!-- TOP BAR -->
+<!-- ===================================== -->
+
+<header class="topbar">
+
+<div>
+
+<h1>
+
+Atlas Infrastructure Dashboard
+
+</h1>
+
+<p>
+
+Real-time Minecraft server monitoring
+
+</p>
+
+</div>
+
+<div class="search-area">
+
+<input
+
+id="serverInput"
+
+placeholder="Enter server IP (mc.hypixel.net)">
+
+<button
+
+id="connectButton">
+
+Connect
+
+</button>
+
+</div>
+
+</header>
+
+<!-- ===================================== -->
+<!-- HERO -->
+<!-- ===================================== -->
+
+<section class="hero">
+
+<div>
+
+<h2>
+
+Monitor servers in real time.
+
+</h2>
+
+<p>
+
+Visualize latency, player counts, server health,
+activity, uptime, and analytics through a
+beautiful monitoring interface.
+
+</p>
+
+</div>
+
+<div class="hero-status">
+
+<div class="status-dot"></div>
+
+<span id="connectionStatus">
+
+Waiting...
+
+</span>
+
+</div>
+
+</section>
+
+<!-- ===================================== -->
+<!-- KPI CARDS -->
+<!-- ===================================== -->
+
+<section class="stats-grid">
+
+<div class="card">
+
+<span>
+
+Players
+
+</span>
+
+<h2 id="players">
+
+--
+
+</h2>
+
+</div>
+
+<div class="card">
+
+<span>
+
+Latency
+
+</span>
+
+<h2 id="latency">
+
+--
+
+</h2>
+
+</div>
+
+<div class="card">
+
+<span>
+
+Version
+
+</span>
+
+<h2 id="version">
+
+--
+
+</h2>
+
+</div>
+
+<div class="card">
+
+<span>
+
+Memory
+
+</span>
+
+<h2 id="memory">
+
+--
+
+</h2>
+
+</div>
+
+<div class="card">
+
+<span>
+
+CPU
+
+</span>
+
+<h2 id="cpu">
+
+--
+
+</h2>
+
+</div>
+
+<div class="card">
+
+<span>
+
+Network
+
+</span>
+
+<h2 id="network">
+
+--
+
+</h2>
+
+</div>
+
+<div class="card">
+
+<span>
+
+Uptime
+
+</span>
+
+<h2 id="uptime">
+
+--
+
+</h2>
+
+</div>
+
+<div class="card">
+
+<span>
+
+Load Index
+
+</span>
+
+<h2 id="load">
+
+--
+
+</h2>
+
+</div>
+
+</section>
+
+<!-- ===================================== -->
+<!-- MAIN GRID -->
+<!-- ===================================== -->
+
+<section class="content-grid">
+
+<div class="panel chart-panel">
+
+<div class="panel-header">
+
+<h3>
+
+Server Performance
+
+</h3>
+
+<span>
+
+Live
+
+</span>
+
+</div>
+
+<canvas
+
+id="performanceChart">
+
+</canvas>
+
+</div>
+
+<div class="panel server-panel">
+
+<div class="panel-header">
+
+<h3>
+
+Server Overview
+
+</h3>
+
+</div>
+
+<div class="overview">
+
+<div>
+
+<label>
+
+Server
+
+</label>
+
+<p id="serverIP">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Status
+
+</label>
+
+<p id="statusText">
+
+Offline
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Players
+
+</label>
+
+<p id="overviewPlayers">
+
+-
+
+</p>
+
+</div>
+
+<div>
+
+<label>
+
+Version
+
+</label>
+
+<p id="overviewVersion">
+
+-
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ===================================== -->
+<!-- ACTIVITY + ANALYTICS GRID -->
+<!-- ===================================== -->
+
+<section class="bottom-grid">
+
+    <!-- =============================== -->
+    <!-- ACTIVITY FEED -->
+    <!-- =============================== -->
+
+    <div class="panel activity-panel">
+
+        <div class="panel-header">
+
+            <h3>
+                Live Activity
+            </h3>
+
+            <span>
+                Real-time
+            </span>
+
+        </div>
+
+        <div class="activity-feed" id="activityFeed">
+
+            <div class="activity-item">
+
+                <div class="dot"></div>
+
+                <div>
+
+                    <p>Waiting for server connection...</p>
+
+                    <span>--</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =============================== -->
+    <!-- ANALYTICS PANEL -->
+    <!-- =============================== -->
+
+    <div class="panel analytics-panel">
+
+        <div class="panel-header">
+
+            <h3>
+                Analytics
+            </h3>
+
+        </div>
+
+        <div class="analytics-grid">
+
+            <div class="mini-card">
+
+                <span>Avg TPS</span>
+
+                <h2 id="tps">
+                    --
+                </h2>
+
+            </div>
+
+            <div class="mini-card">
+
+                <span>Chunks Loaded</span>
+
+                <h2 id="chunks">
+                    --
+                </h2>
+
+            </div>
+
+            <div class="mini-card">
+
+                <span>Entities</span>
+
+                <h2 id="entities">
+                    --
+                </h2>
+
+            </div>
+
+            <div class="mini-card">
+
+                <span>Tick Time</span>
+
+                <h2 id="ticktime">
+                    --
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ===================================== -->
+<!-- SERVERS TABLE -->
+<!-- ===================================== -->
+
+<section class="panel table-panel">
+
+    <div class="panel-header">
+
+        <h3>
+            Connected Servers
+        </h3>
+
+        <span>
+            Live list
+        </span>
+
+    </div>
+
+    <table class="server-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Server</th>
+
+                <th>Status</th>
+
+                <th>Players</th>
+
+                <th>Latency</th>
+
+                <th>Version</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="serverTableBody">
+
+            <tr>
+
+                <td colspan="5" class="empty">
+
+                    No servers connected yet
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</section>
+
+<!-- ===================================== -->
+<!-- FOOTER -->
+<!-- ===================================== -->
+
+<footer class="footer">
+
+    <div>
+
+        <h4>Atlas Monitor</h4>
+
+        <p>Modern Minecraft infrastructure dashboard</p>
+
+    </div>
+
+    <div class="footer-right">
+
+        <span>Built with Flask + Chart.js</span>
+
+    </div>
+
+</footer>
+
+<!-- ===================================== -->
+<!-- JAVASCRIPT (DASHBOARD LOGIC) -->
+<!-- ===================================== -->
+
+<script>
+
+let serverIP = "";
+let chart = null;
+let chartData = [];
+let maxPoints = 20;
+
+// ===============================
+// INIT CHART
+// ===============================
+
+function initChart() {
+
+    const ctx = document.getElementById("performanceChart").getContext("2d");
+
+    chart = new Chart(ctx, {
+
+        type: "line",
+
+        data: {
+
+            labels: [],
+
+            datasets: [
+
+                {
+                    label: "Latency (ms)",
+                    data: [],
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+
+            scales: {
+
+                x: {
+                    display: false
+                },
+
+                y: {
+                    beginAtZero: true
+                }
+
+            }
+
+        }
+
+    });
+
+}
+
+// ===============================
+// UPDATE CHART
+// ===============================
+
+function updateChart(value) {
+
+    const now = new Date().toLocaleTimeString();
+
+    if (chart.data.labels.length > maxPoints) {
+        chart.data.labels.shift();
+        chart.data.datasets[0].data.shift();
+    }
+
+    chart.data.labels.push(now);
+    chart.data.datasets[0].data.push(value);
+
+    chart.update();
+
+}
+
+// ===============================
+// UI HELPERS
+// ===============================
+
+function setStatus(text, online = false) {
+
+    document.getElementById("connectionStatus").innerText = text;
+
+    document.querySelector(".status-dot").style.background = online ? "#22c55e" : "#ef4444";
+
+}
+
+function addActivity(message) {
+
+    const feed = document.getElementById("activityFeed");
+
+    const item = document.createElement("div");
+
+    item.className = "activity-item";
+
+    item.innerHTML = `
+        <div class="dot"></div>
+        <div>
+            <p>${message}</p>
+            <span>just now</span>
+        </div>
+    `;
+
+    feed.prepend(item);
+
+}
+
+// ===============================
+// MOCK DATA (REPLACE LATER WITH FLASK API)
+// ===============================
+
+function generateFakeData() {
+
+    return {
+
+        players: Math.floor(Math.random() * 120),
+
+        latency: Math.floor(Math.random() * 120),
+
+        version: "1.20.4",
+
+        memory: (Math.random() * 100).toFixed(1) + "%",
+
+        cpu: (Math.random() * 100).toFixed(1) + "%",
+
+        network: (Math.random() * 1000).toFixed(0) + " kb/s",
+
+        uptime: Math.floor(Math.random() * 100) + "h",
+
+        load: (Math.random() * 10).toFixed(2),
+
+        tps: (20 - Math.random() * 5).toFixed(2),
+
+        chunks: Math.floor(Math.random() * 50000),
+
+        entities: Math.floor(Math.random() * 2000),
+
+        ticktime: (Math.random() * 50).toFixed(2)
+
+    };
+
+}
+
+// ===============================
+// UPDATE UI
+// ===============================
+
+function updateUI(data) {
+
+    document.getElementById("players").innerText = data.players;
+
+    document.getElementById("latency").innerText = data.latency + " ms";
+
+    document.getElementById("version").innerText = data.version;
+
+    document.getElementById("memory").innerText = data.memory;
+
+    document.getElementById("cpu").innerText = data.cpu;
+
+    document.getElementById("network").innerText = data.network;
+
+    document.getElementById("uptime").innerText = data.uptime;
+
+    document.getElementById("load").innerText = data.load;
+
+    document.getElementById("tps").innerText = data.tps;
+
+    document.getElementById("chunks").innerText = data.chunks;
+
+    document.getElementById("entities").innerText = data.entities;
+
+    document.getElementById("ticktime").innerText = data.ticktime;
+
+    document.getElementById("overviewPlayers").innerText = data.players;
+
+    document.getElementById("overviewVersion").innerText = data.version;
+
+    document.getElementById("statusText").innerText = "Online";
+
+    document.getElementById("serverIP").innerText = serverIP;
+
+}
+
+// ===============================
+// TABLE UPDATE (SINGLE SERVER)
+// ===============================
+
+function updateTable(data) {
+
+    const tbody = document.getElementById("serverTableBody");
+
+    tbody.innerHTML = `
+        <tr>
+            <td>${serverIP}</td>
+            <td style="color:#22c55e;">Online</td>
+            <td>${data.players}</td>
+            <td>${data.latency} ms</td>
+            <td>${data.version}</td>
+        </tr>
+    `;
+
+}
+
+// ===============================
+// MAIN LOOP
+// ===============================
+
+function startMonitoring() {
+
+    setStatus("Connected", true);
+
+    addActivity("Connected to " + serverIP);
+
+    initChart();
+
+    setInterval(() => {
+
+        const data = generateFakeData();
+
+        updateUI(data);
+
+        updateChart(data.latency);
+
+        updateTable(data);
+
+        addActivity("Updated server metrics");
+
+    }, 2500);
+
+}
+
+// ===============================
+// CONNECT BUTTON
+// ===============================
+
+document.getElementById("connectButton").addEventListener("click", () => {
+
+    const input = document.getElementById("serverInput").value;
+
+    if (!input) return;
+
+    serverIP = input;
+
+    startMonitoring();
+
+});
+
+// ===============================
+// INIT STATE
+// ===============================
+
+setStatus("Waiting for connection...", false);
+
+
+</script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+
+</body>
+</html>
